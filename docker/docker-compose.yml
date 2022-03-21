@@ -1,0 +1,33 @@
+version: "3.9"
+
+x-config:
+  volumes:
+    front:
+      - &front
+        type: bind
+        source: ../app
+        target: &working_dir_front /app
+
+services:
+
+  front:
+    container_name: front
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - 80:3000
+      - 3000:3000
+    environment:
+      TZ: Europe/Moscow
+      APP_ENV: dev
+    volumes:
+      - *front
+    working_dir: *working_dir_front
+    command:
+      - 'bash'
+      - '-c'
+      - 'npm ci && npm start'
